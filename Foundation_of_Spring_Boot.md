@@ -1,0 +1,1260 @@
+# Foundation of Spring Boot
+
+---
+
+## Table of Contents
+1. [What is Spring Boot?](#1-what-is-spring-boot)
+2. [Why Do Backend Frameworks Exist?](#2-why-do-backend-frameworks-exist)
+3. [Problems with Early Java Backend Development](#3-problems-with-early-java-backend-development)
+4. [How Spring Framework Solved These Problems](#4-how-spring-framework-solved-these-problems)
+5. [Problems with Spring (Before Spring Boot)](#5-problems-with-spring-before-spring-boot)
+6. [Why Spring Boot Was Created](#6-why-spring-boot-was-created)
+7. [Key Innovations of Spring Boot](#7-key-innovations-of-spring-boot)
+8. [Java Prerequisites for Spring Boot](#8-java-prerequisites-for-spring-boot)
+9. [IDE Setup — IntelliJ IDEA](#9-ide-setup--intellij-idea)
+10. [Creating a Spring Boot Project using Spring Initializr](#10-creating-a-spring-boot-project-using-spring-initializr)
+11. [Understanding the Project Structure](#11-understanding-the-project-structure)
+12. [Setting Up JDK in IntelliJ IDEA](#12-setting-up-jdk-in-intellij-idea)
+13. [Running Your First Spring Boot Application](#13-running-your-first-spring-boot-application)
+14. [Writing the First REST Endpoint](#14-writing-the-first-rest-endpoint)
+15. [Core Spring Concepts — Tight Coupling vs Loose Coupling](#15-core-spring-concepts--tight-coupling-vs-loose-coupling)
+16. [Achieving Loose Coupling Using Interfaces](#16-achieving-loose-coupling-using-interfaces)
+17. [Dependency Injection (DI)](#17-dependency-injection-di)
+18. [Inversion of Control (IoC)](#18-inversion-of-control-ioc)
+19. [Spring Beans](#19-spring-beans)
+20. [Spring Annotations](#20-spring-annotations)
+21. [@Autowired — Automatic Dependency Injection](#21-autowired--automatic-dependency-injection)
+22. [Multiple Implementations — @Primary and @Qualifier](#22-multiple-implementations--primary-and-qualifier)
+23. [Types of Dependency Injection](#23-types-of-dependency-injection)
+24. [Bean Scope — Singleton vs Prototype](#24-bean-scope--singleton-vs-prototype)
+25. [application.properties Configuration](#25-applicationproperties-configuration)
+
+---
+
+## 1. What is Spring Boot?
+
+**Spring Boot** is an **extension of the Spring Framework** that helps developers build backend applications:
+
+- **Faster** — complete backend applications can be built in minutes instead of hours
+- **Easier** — requires minimal configuration
+- **Production-ready** — provides production-ready features out of the box
+
+> **Important Clarification:** Spring Boot is **not a replacement** for Spring. It uses Spring internally. Spring Boot just makes working with Spring much easier.
+
+In simple terms:
+- Spring Boot = Spring Framework + Auto-configuration + Embedded Server + Sensible Defaults
+
+---
+
+## 2. Why Do Backend Frameworks Exist?
+
+**Before frameworks like Spring**, Java backend development was done using:
+
+- **Servlets** — to handle HTTP requests
+- **JSP (Java Server Pages)** — for server-side rendering
+- **JDBC (Java Database Connectivity)** — for database communication
+- **Application Servers** — like Tomcat, WebLogic to host applications
+
+The typical flow was: **Browser → Servlet → JDBC → Database**
+
+This sounds simple but in reality it was **very messy and hard to maintain**.
+
+---
+
+## 3. Problems with Early Java Backend Development
+
+### 3.1 Too Much Boilerplate Code
+
+When using plain JDBC, for every database operation a developer had to:
+
+1. Open a connection
+2. Create a statement
+3. Execute the query
+4. Handle the result
+5. Close the connection
+6. Handle exceptions
+
+This entire block of code had to be **written again and again in every project** — resulting in massive amounts of repetitive boilerplate code.
+
+### 3.2 Tight Coupling
+
+**Definition:** When one class directly creates and depends on a concrete implementation of another class, it is called **tight coupling**.
+
+**Example of tight coupling:**
+```java
+MySQLDatabase db = new MySQLDatabase();
+```
+
+If tomorrow you want to switch to PostgreSQL, you must change **every single place** in the code where `MySQLDatabase` was used. This makes the system:
+- Hard to maintain
+- Hard to test
+- Hard to scale
+
+### 3.3 No Proper Structure / Architecture
+
+There was no standard architecture that all developers followed. Different developers wrote code in completely different ways — no dependency management, no lifecycle management, no consistent patterns across the team.
+
+### 3.4 Manual Configuration
+
+Everything had to be configured manually:
+- XML configuration files
+- `web.xml` setup
+- Server configuration
+
+Even a small mistake in these files would cause the server to **not start at all**.
+
+### 3.5 Problems Specific to Servlets
+
+- Too **low-level** — you had to manually manage:
+  - Request parsing
+  - Response writing
+  - Thread handling
+  - Session management
+- No **Separation of Concerns** — business logic and request handling were all mixed together (like a "khichdi")
+
+### 3.6 Problems Specific to JDBC
+
+- **Lots of boilerplate code** (as discussed above)
+- **Resource leaks** — if you forgot to close a connection, it caused memory leaks
+- **Hard to switch databases** — changing from MySQL to PostgreSQL required significant code changes
+
+### 3.7 Problems with XML Configuration (Early Spring)
+
+- In large projects, XML files ran into **thousands of lines**
+- Very hard to read and understand
+- Debugging was extremely difficult
+- Not developer-friendly
+
+**Conclusion:** Backend development without a framework is:
+- Slow
+- Hard to maintain
+- Very error-prone
+- Not scalable
+
+---
+
+## 4. How Spring Framework Solved These Problems
+
+Spring Framework was built with a **core idea**: make Java backend development **simple, clean, and loosely coupled**.
+
+### 4.1 Dependency Injection (DI)
+
+Instead of creating objects manually with `new`, Spring creates and provides objects for you.
+
+- Before DI: `MySQLDatabase db = new MySQLDatabase();`
+- With DI: Spring injects the object automatically
+
+This made:
+- Changing implementations easy
+- Testing easy
+- Loose coupling achievable
+
+### 4.2 Inversion of Control (IoC)
+
+Spring takes over control of:
+- **Object creation**
+- **Object lifecycle management**
+- **Dependency wiring**
+
+You just focus on your **business logic** — Spring handles the rest.
+
+### 4.3 Spring JDBC and ORM Support
+
+Spring simplified all database-related work:
+- Less boilerplate code for JDBC operations
+- Better exception handling
+- Excellent integration with Hibernate and JPA (ORM frameworks)
+
+### 4.4 MVC Architecture
+
+Spring introduced a clean **MVC (Model-View-Controller) architecture** that separated:
+- **Controller** — handles incoming requests
+- **Service** — contains business logic
+- **Repository** — handles data access / database operations
+
+This gave all developers a **standard structure** to follow.
+
+### Why Spring Became So Popular
+
+| Problem (Before Spring) | Spring's Solution |
+|---|---|
+| Boilerplate code | Spring JDBC / ORM removed repetitive code |
+| Tight coupling | Dependency Injection achieved loose coupling |
+| No standard structure | MVC architecture provided clear layers |
+| No dependency management | IoC container managed object lifecycle |
+| Manual XML config | Spring reduced manual wiring significantly |
+
+Additionally, Spring built a **huge ecosystem** — Spring Security, Spring Data, Spring Cloud — enabling enterprise-ready application development.
+
+---
+
+## 5. Problems with Spring (Before Spring Boot)
+
+Spring was very powerful, but it was **not easy to use**. The problems were:
+
+### 5.1 Too Much Configuration
+
+Old Spring projects required:
+- Multiple XML files for bean definitions
+- `web.xml` configuration
+- Web configs, Dispatcher Servlet setup
+
+Starting a new project took a **very long time** just because of setup.
+
+### 5.2 Hard Initial Setup
+
+- JAR files had to be **downloaded manually**
+- Server (Tomcat etc.) had to be **manually configured**
+- `web.xml` had to be set up
+- Spring context had to be manually configured
+
+For beginners, this was a **nightmare**.
+
+### 5.3 Version Compatibility Issues
+
+If any dependency version was even slightly wrong, the **entire application would not start**. Managing compatible versions across multiple libraries was painful.
+
+> **What is a Dependency?**
+> In the context of Spring / Spring Boot, a **dependency** is any library or code written by someone else that you can use in your application for specific functionality.
+
+### 5.4 Slow Development Speed
+
+Even with Spring, development was not fast enough — especially for the microservices era where people needed **quick setup, minimal configuration**, and production-ready defaults.
+
+---
+
+## 6. Why Spring Boot Was Created
+
+> **Spring Boot was created to make Spring easy.**
+
+Spring Boot was built to:
+- Remove the pain of excessive configuration
+- Enable much faster development
+- Provide production-ready defaults automatically
+
+### Main Goals of Spring Boot
+
+- **Zero or minimal configuration** required
+- **Auto-setup** as much as possible automatically
+- **Embedded servers** (no external server needed)
+- **Sensible defaults** provided out of the box
+- **Production-ready features** available immediately
+
+---
+
+## 7. Key Innovations of Spring Boot
+
+### 7.1 Auto-Configuration
+
+Spring Boot **automatically configures** components based on what dependencies are on the classpath:
+
+- Add `spring-boot-starter-web` → Spring Boot auto-configures Tomcat, Spring MVC, and Jackson (JSON handling)
+- Add a database dependency → Spring Boot auto-configures the DataSource
+
+You don't have to configure these manually at all.
+
+### 7.2 Starters (Dependency Bundles)
+
+Instead of adding 10 individual libraries, you add **one "starter" dependency** that bundles everything needed.
+
+**Example:**
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+This single dependency includes Spring MVC, Tomcat, Jackson, and other related libraries — all with compatible versions.
+
+### 7.3 Embedded Server
+
+Spring Boot embeds a server (Tomcat by default) **inside the JAR file** itself. No need to:
+- Install a separate Tomcat server
+- Deploy WAR files to an external server
+
+You just run:
+```bash
+java -jar app.jar
+```
+
+And your application starts — **perfect for microservices, cloud deployments, and Docker**.
+
+### 7.4 Production-Ready Features (Spring Boot Actuator)
+
+Spring Boot Actuator provides out-of-the-box endpoints for:
+- **Health checks** — check if the application is running fine
+- **Metrics** — see performance metrics
+- **Monitoring** — monitor application state
+- **Logs** — view application logs
+
+This is extremely important for modern production systems.
+
+### Summary
+
+| Layer | Who Fixed the Problem |
+|---|---|
+| Raw Java (Servlets/JDBC) complexity | Spring Framework |
+| Spring's configuration complexity | Spring Boot |
+
+---
+
+## 8. Java Prerequisites for Spring Boot
+
+Before learning Spring Boot, you **must know** these Java concepts:
+
+### 8.1 OOP Concepts (Non-negotiable)
+
+- **Classes and Objects** — fundamental building blocks
+- **Inheritance** — extending behavior
+- **Encapsulation** — data hiding
+- **Polymorphism** — same interface, different behavior
+- **Abstraction** — hiding implementation details
+- **Interfaces** — Spring uses interfaces extensively for loose coupling
+
+### 8.2 Basic Java Syntax
+
+- Variables, methods, loops
+- Conditional statements
+- Packages and their structure
+- **Access modifiers**: `public`, `private`, `protected` — critical for understanding component scanning
+
+### 8.3 Exception Handling
+
+- `try-catch` blocks
+- Custom exceptions
+- Spring uses exception handling heavily in REST APIs
+
+### 8.4 Collections Framework (Must Know)
+
+| Collection | Why Important |
+|---|---|
+| `List` | Returning multiple records from database, API responses |
+| `Map` | JSON mapping, caching |
+| `Set` | Unique collections, deduplication |
+
+These are used extensively in REST APIs and database result handling.
+
+---
+
+## 9. IDE Setup — IntelliJ IDEA
+
+**IntelliJ IDEA** is the recommended IDE for Spring Boot development. Almost all Spring Boot developers use it.
+
+### Installation Steps
+
+1. Go to the official JetBrains website: [jetbrains.com/idea](https://www.jetbrains.com/idea/)
+2. Click **Download**
+3. Choose your operating system: **Windows / macOS / Linux**
+4. Download and run the installer
+5. Follow the **Next → Next → Finish** steps
+
+### Community vs Ultimate
+
+| Version | Cost | Features |
+|---|---|---|
+| **Community (Free)** | Free | Sufficient for Spring Boot development |
+| **Ultimate** | Paid (30-day free trial available) | Advanced features (database tools, profilers, etc.) |
+
+> **Note:** Currently JetBrains has unified both versions into a single download. You can start with a 30-day Ultimate trial; after that it continues as the free version. The free version is **sufficient** for this series.
+
+---
+
+## 10. Creating a Spring Boot Project using Spring Initializr
+
+**Spring Initializr** is the official tool for generating Spring Boot project scaffolding. Most professional developers use it to bootstrap new projects.
+
+URL: [start.spring.io](https://start.spring.io)
+
+### Step-by-Step Project Setup
+
+#### Step 1: Build Tool — Project Type
+
+| Option | Description |
+|---|---|
+| **Maven** | Older, widely used industry standard — recommended |
+| **Gradle** | Newer, also very good but less common in industry |
+
+→ **Select Maven** for this series.
+
+#### Step 2: Language
+
+- **Java** — most common for Spring Boot development (use this)
+- Kotlin — popular for Android development
+- Groovy — less common
+
+→ **Select Java**
+
+#### Step 3: Spring Boot Version
+
+- Select the **latest stable version**
+- Avoid versions tagged with `SNAPSHOT` or `M1`, `M2` — these are experimental / testing versions
+- A version like `3.x.x` or `4.x.x` (without any suffix) = **stable**
+
+→ **Always select the stable version**
+
+#### Step 4: Project Metadata
+
+| Field | Description | Example |
+|---|---|---|
+| **Group** | Reverse domain of your organization | `com.example` or `org.company` |
+| **Artifact** | Project name (also becomes the final JAR filename) | `demo` → `demo.jar` |
+| **Name** | Display name of the project | `Demo` |
+| **Description** | Short description | `Demo project for Spring Boot` |
+| **Package Name** | Root Java package (group + artifact) | `com.example.demo` |
+
+#### Step 5: Packaging
+
+| Type | Use Case |
+|---|---|
+| **JAR** | Spring Boot standard — embedded server inside ✅ |
+| WAR | Legacy — needed external application server (not used in modern Spring Boot) |
+
+→ **Always select JAR** for Spring Boot projects.
+
+#### Step 6: Java Version
+
+- Spring Boot 3.x and above requires **Java 17 or higher**
+- Most commonly used versions: **Java 17** or **Java 21**
+
+→ **Select Java 17**
+
+#### Step 7: Add Dependencies
+
+Click **"Add Dependencies"** and add what you need. For a basic project:
+
+- **Spring Web** — to build RESTful APIs using Spring MVC, includes embedded Apache Tomcat
+
+```
+Other available dependencies include:
+- Spring Data JPA (database)
+- MongoDB, Redis (databases)
+- Spring Security
+- Spring Boot Actuator
+- Kafka
+- And many more...
+```
+
+#### Step 8: Generate the Project
+
+1. Click **Generate** — a ZIP file will be downloaded
+2. **Extract** the ZIP to a folder
+3. Open **IntelliJ IDEA** → **Open** → Select the extracted folder
+4. Click **Trust Project**
+5. IntelliJ will load the project and download dependencies (takes 1-2 minutes on first load)
+
+---
+
+## 11. Understanding the Project Structure
+
+After importing the project, you will see the following structure:
+
+```
+spring-core-concepts/
+├── pom.xml                          ← Maven build configuration
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/example/demo/   ← Your application code goes here
+│   │   │       └── DemoApplication.java  ← Main class (entry point)
+│   │   └── resources/
+│   │       ├── application.properties   ← App configuration
+│   │       ├── static/                  ← Frontend static files (HTML, CSS, images)
+│   │       └── templates/               ← Server-side templates (rarely used in modern APIs)
+│   └── test/
+│       └── java/
+│           └── com/example/demo/
+│               └── DemoApplicationTests.java  ← Unit test files
+└── .mvn/                            ← Maven wrapper files
+```
+
+### Key Files Explained
+
+#### `pom.xml` (Project Object Model)
+
+The Maven configuration file. It contains:
+- Project metadata (groupId, artifactId, version)
+- All **dependencies** your project uses
+- Build plugins
+
+```xml
+<!-- Example dependency in pom.xml -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+All dependencies you add are listed here. Spring Boot Starter Web includes internally:
+- Spring MVC
+- Apache Tomcat (embedded)
+- Jackson (JSON processing)
+- HTTP message converters
+
+You can also view dependencies in IntelliJ from the **Maven panel** (right side of IDE).
+
+#### `DemoApplication.java` — The Main Class
+
+```java
+@SpringBootApplication
+public class DemoApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+}
+```
+
+- This is the **entry point** of the application
+- `@SpringBootApplication` annotation enables auto-configuration and component scanning
+- **Important:** This main class must be placed at the **root package level**. If moved to a sub-package, Spring Boot's component scanning may not work correctly
+
+#### `application.properties`
+
+Located at `src/main/resources/application.properties`. This file stores all application-level configuration:
+
+```properties
+# Application name
+spring.application.name=demo
+
+# Change the default port (default is 8080)
+server.port=8081
+```
+
+---
+
+## 12. Setting Up JDK in IntelliJ IDEA
+
+When you open a project, IntelliJ may show: *"Project JDK is not defined"*. Here's how to set it up:
+
+### Steps
+
+1. Go to **File → Project Structure** (or click the Settings icon)
+2. Click on **SDK**
+3. Click **Download JDK**
+4. Select **Version 17** (or 21)
+5. Choose a vendor (e.g., **Amazon Corretto** — free, open-source, widely used)
+6. Click **Download**
+7. Click **OK**
+
+After this, IntelliJ will sync the project and you will be able to run your application.
+
+---
+
+## 13. Running Your First Spring Boot Application
+
+### How to Run
+
+- Click the **green Run button** (▶) at the top right
+- Or right-click on `DemoApplication.java` → **Run**
+- Or use the keyboard shortcut
+
+### What You'll See in the Console (Startup Logs)
+
+```
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+...
+
+Starting DemoApplication using Java 17
+Tomcat initialized with port(s): 8080 (http)
+Starting service [Tomcat]
+Started DemoApplication in 2.345 seconds
+```
+
+Key things to observe:
+- Application started using **Java 17**
+- **Tomcat** (embedded server) started on **port 8080**
+- Context path is `/`
+
+> After the first run, subsequent starts are much faster as dependencies are already loaded.
+
+### Stopping the Application
+
+Click the **red Stop button** (■) in the console or toolbar.
+
+---
+
+## 14. Writing the First REST Endpoint
+
+After starting the application, hitting `http://localhost:8080` will show an error because no endpoints are mapped. Let's write a simple one.
+
+### Steps
+
+1. Inside your main package, create a new **package** called `controller`
+2. Inside `controller`, create a new **class** called `HelloController`
+
+```java
+package com.example.demo.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HelloController {
+
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "Hi, this is an API!";
+    }
+}
+```
+
+### How It Works
+
+- `@RestController` — marks this class as a web controller that handles HTTP requests and returns data (not a view)
+- `@GetMapping("/hello")` — maps HTTP GET requests to the path `/hello` to this method
+- The returned `String` is directly sent as the HTTP response body
+
+### Testing
+
+1. Stop and re-run the application
+2. Open a browser and navigate to: `http://localhost:8080/hello`
+3. You should see: `Hi, this is an API!`
+
+> **Note:** GET/POST/PUT/DELETE mappings and building complete REST APIs will be covered in detail in subsequent videos of the series.
+
+---
+
+## 15. Core Spring Concepts — Tight Coupling vs Loose Coupling
+
+This is one of the **most important sections** to understand Spring's core philosophy.
+
+### The Problem: Tight Coupling
+
+Let's build a simple example to demonstrate the problem:
+
+**`MySQLDatabase.java`**
+```java
+public class MySQLDatabase {
+    public void saveToDB(String user) {
+        System.out.println("MySQLDatabase :: Saving user to DB: " + user);
+    }
+}
+```
+
+**`UserService.java`**
+```java
+public class UserService {
+    
+    MySQLDatabase mySQLDatabase = new MySQLDatabase(); // TIGHT COUPLING ❌
+    
+    public void saveUser(String user) {
+        System.out.println("UserService :: Saving user: " + user);
+        mySQLDatabase.saveToDB(user);
+    }
+}
+```
+
+**`MainApplication.java`**
+```java
+@SpringBootApplication
+public class MainApplication implements CommandLineRunner {
+    
+    public static void main(String[] args) {
+        SpringApplication.run(MainApplication.class, args);
+    }
+    
+    @Override
+    public void run(String... args) throws Exception {
+        UserService userService = new UserService(); // TIGHT COUPLING ❌
+        userService.saveUser("Aniket is the user");
+    }
+}
+```
+
+### Why This is a Problem
+
+The above code works, but it has serious problems:
+
+| Problem | Explanation |
+|---|---|
+| **Tight Coupling** | `UserService` directly creates a `MySQLDatabase` object using `new` |
+| **Hard to switch database** | If you want to use MongoDB tomorrow, you must change `UserService` code everywhere |
+| **Hard to test** | Cannot easily replace `MySQLDatabase` with a mock for unit testing |
+| **Not scalable** | In large systems, this creates a web of dependencies that's hard to manage |
+
+The `UserService` class is worried about **which database is being used and how it's created** — that's not its concern. Its only concern should be: *"Give me something that can save data to a DB."*
+
+---
+
+## 16. Achieving Loose Coupling Using Interfaces
+
+### The Solution: Program to an Interface
+
+**Step 1: Create a `Database` Interface**
+
+```java
+public interface Database {
+    void save(String user);
+}
+```
+
+**Step 2: Implement the Interface in `MySQLDatabase`**
+
+```java
+public class MySQLDatabase implements Database {
+    
+    @Override
+    public void save(String user) {
+        System.out.println("MySQLDatabase :: Saving user to DB: " + user);
+    }
+}
+```
+
+**Step 3: Use the Interface in `UserService` (not the concrete class)**
+
+```java
+public class UserService {
+    
+    Database database; // ✅ Depends on interface, not concrete class
+    
+    // Constructor — receives the implementation from outside
+    public UserService(Database database) {
+        this.database = database;
+    }
+    
+    public void saveUser(String user) {
+        System.out.println("UserService :: Saving user: " + user);
+        database.save(user);
+    }
+}
+```
+
+**Step 4: Wire everything in Main**
+
+```java
+@Override
+public void run(String... args) throws Exception {
+    Database db = new MySQLDatabase();        // ✅ Choose implementation here
+    UserService userService = new UserService(db); // ✅ Inject via constructor
+    userService.saveUser("Aniket is the user");
+}
+```
+
+### Benefits of This Approach
+
+- `UserService` does **not care** which database is used
+- To switch to MongoDB: just create `MongoDatabase implements Database` and inject it
+- **Zero changes** needed in `UserService`
+- Easy to write unit tests by injecting a mock/fake `Database`
+
+### Still a Problem
+
+Even with interfaces, we are still manually creating objects with `new` and wiring them. In a large application with hundreds of classes, this becomes:
+- Repetitive
+- Error-prone
+- Hard to manage
+
+**This is exactly the problem that Spring's Dependency Injection solves.**
+
+---
+
+## 17. Dependency Injection (DI)
+
+**Definition:**
+> Dependency Injection is a design pattern where an object does not create its own dependencies. Instead, the dependencies are **injected** (provided) from outside — typically by a framework like Spring.
+
+### Without DI (Manual)
+
+```java
+Database db = new MySQLDatabase();
+UserService userService = new UserService(db);
+```
+
+You are manually creating objects and passing them.
+
+### With DI (Spring does it for you)
+
+Spring automatically:
+1. Creates the `MySQLDatabase` object
+2. Creates the `UserService` object
+3. Injects `MySQLDatabase` into `UserService`
+
+**You just declare what you need — Spring provides it.**
+
+### Benefits of DI
+
+- **Loose coupling** — classes do not depend on concrete implementations
+- **Easier testing** — mock/stub implementations can be injected easily
+- **Easier to change implementations** — swap `MySQLDatabase` for `MongoDatabase` without touching business logic
+- **Better code organization** — each class focuses on its single responsibility
+
+---
+
+## 18. Inversion of Control (IoC)
+
+**Definition:**
+> Inversion of Control (IoC) means that the **control of object creation and lifecycle management is transferred from the developer to the Spring Framework**.
+
+### Normal Flow (Without IoC)
+
+Developer controls everything:
+```
+Developer → creates objects → wires dependencies → manages lifecycle
+```
+
+### IoC Flow
+
+Spring controls:
+```
+Spring IoC Container → creates objects → wires dependencies → manages lifecycle
+Developer → just writes business logic
+```
+
+The "control" that was in your hands is now "inverted" to Spring — that's why it's called **Inversion of Control**.
+
+### The IoC Container
+
+Spring's IoC container is responsible for:
+- **Instantiating** beans (objects managed by Spring)
+- **Configuring** beans (wiring dependencies)
+- **Managing the lifecycle** of beans (from creation to destruction)
+
+The main IoC container implementations in Spring:
+- `BeanFactory` — basic container (rarely used directly)
+- `ApplicationContext` — more advanced, feature-rich container (always used in Spring Boot)
+
+---
+
+## 19. Spring Beans
+
+**Definition:**
+> A **Spring Bean** is any Java object whose **lifecycle is managed by the Spring IoC container**. Spring creates, configures, and destroys beans.
+
+### Key Points
+
+- Not every Java object is a Bean — only those registered with the Spring container
+- Spring maintains a **Bean Registry** (essentially a Map of bean names → bean instances)
+- Beans are by default **singletons** (one instance per Spring context)
+
+### How to Create a Bean
+
+There are two main approaches:
+
+#### Approach 1: Using Stereotype Annotations
+
+Mark your class with an annotation, and Spring auto-discovers it:
+
+```java
+@Component
+public class MySQLDatabase implements Database {
+    // Spring creates this as a bean automatically
+}
+```
+
+#### Approach 2: Using `@Bean` in a Configuration Class
+
+```java
+@Configuration
+public class AppConfig {
+    
+    @Bean
+    public Database database() {
+        return new MySQLDatabase();
+    }
+}
+```
+
+---
+
+## 20. Spring Annotations
+
+Annotations are **metadata markers** placed on classes or methods that tell Spring how to treat them.
+
+### Component Stereotype Annotations
+
+These annotations tell Spring: *"Create a bean from this class and manage it."*
+
+| Annotation | Used On | Purpose |
+|---|---|---|
+| `@Component` | Any class | Generic component — makes it a Spring-managed bean |
+| `@Service` | Service layer classes | Business logic layer; semantically meaningful |
+| `@Repository` | DAO / data access classes | Data access layer; also enables exception translation |
+| `@Controller` | MVC Controllers | Handles web requests; returns views |
+| `@RestController` | REST API Controllers | Handles web requests; returns data (JSON/XML) |
+
+> **Note:** `@Service`, `@Repository`, `@Controller`, and `@RestController` are all **specializations of `@Component`**. Functionally, `@Component` would also work in their place, but using the specific annotation improves **code readability** and enables specific behavior (e.g., `@Repository` adds exception translation).
+
+### Example
+
+```java
+// Database interface
+public interface Database {
+    void save(String user);
+}
+
+// MySQL implementation — marked as a Spring Bean
+@Component
+public class MySQLDatabase implements Database {
+    
+    @Override
+    public void save(String user) {
+        System.out.println("MySQLDatabase :: Saving user: " + user);
+    }
+}
+
+// UserService — marked as a Spring Bean
+@Service
+public class UserService {
+    
+    Database database; // Spring will inject this
+    
+    public UserService(Database database) {
+        this.database = database;
+    }
+    
+    public void saveUser(String user) {
+        System.out.println("UserService :: Saving user: " + user);
+        database.save(user);
+    }
+}
+```
+
+### How Component Scanning Works
+
+When Spring Boot starts, `@SpringBootApplication` triggers **component scanning**. Spring scans:
+- The package where `DemoApplication.java` is located
+- All **sub-packages** below it
+
+It finds all classes annotated with `@Component`, `@Service`, `@Repository`, `@Controller`, etc. and registers them as beans.
+
+> **Important:** This is why the main class must be in the **root package** — so Spring can scan all sub-packages properly.
+
+---
+
+## 21. @Autowired — Automatic Dependency Injection
+
+`@Autowired` tells Spring: *"Please inject the required dependency here automatically."*
+
+### Field Injection (Basic example)
+
+```java
+@Service
+public class UserService {
+    
+    @Autowired
+    Database database; // Spring injects the Database bean here
+    
+    public void saveUser(String user) {
+        database.save(user);
+    }
+}
+```
+
+### How @Autowired Works
+
+1. Spring scans all beans in the container
+2. When it finds `@Autowired` on a field/constructor/setter, it looks for a bean of the **matching type**
+3. It injects that bean automatically
+4. If Spring cannot find a matching bean, it throws an error at startup
+
+> **Important:** `@Autowired` works **by type** — it looks for a bean of the same type as the annotated field/parameter.
+
+---
+
+## 22. Multiple Implementations — @Primary and @Qualifier
+
+A situation arises when you have **multiple classes implementing the same interface**. Spring won't know which one to inject — causing an ambiguity error.
+
+### Example Scenario
+
+```java
+@Component
+public class MySQLDatabase implements Database { ... }
+
+@Component
+public class MongoDatabase implements Database { ... }
+```
+
+If `UserService` has:
+```java
+@Autowired
+Database database;
+```
+
+Spring sees **two beans of type `Database`** and throws: `NoUniqueBeanDefinitionException`
+
+### Solution 1: `@Primary`
+
+Mark one implementation as the **default** (primary) choice:
+
+```java
+@Component
+@Primary  // ← This will be injected by default
+public class MySQLDatabase implements Database { ... }
+
+@Component
+public class MongoDatabase implements Database { ... }
+```
+
+Now when `@Autowired` is used without any qualifier, Spring will inject `MySQLDatabase`.
+
+### Solution 2: `@Qualifier`
+
+Use `@Qualifier` to **explicitly specify** which bean to inject by bean name:
+
+```java
+@Service
+public class UserService {
+    
+    @Autowired
+    @Qualifier("mongoDatabase")  // ← Inject specifically MongoDatabase
+    Database database;
+}
+```
+
+> **Default bean names:** When you annotate a class with `@Component`, the bean name is the **class name with a lowercase first letter**. So `MySQLDatabase` → `mySQLDatabase`, `MongoDatabase` → `mongoDatabase`.
+
+### @Primary vs @Qualifier
+
+| Annotation | When to Use |
+|---|---|
+| `@Primary` | When one implementation should be the default for most use cases |
+| `@Qualifier` | When you need a specific implementation in a particular place |
+
+---
+
+## 23. Types of Dependency Injection
+
+Spring supports three types of dependency injection:
+
+### 23.1 Constructor Injection (Recommended ✅)
+
+The dependency is injected through the **class constructor**.
+
+```java
+@Service
+public class UserService {
+    
+    private final Database database;
+    
+    // Constructor injection
+    public UserService(Database database) {
+        this.database = database;
+    }
+    
+    public void saveUser(String user) {
+        database.save(user);
+    }
+}
+```
+
+**Why Constructor Injection is Recommended:**
+- Makes dependencies **explicit and clear**
+- Supports **immutability** (`final` fields)
+- Makes classes **easier to test** — you can pass mock objects directly
+- **Mandatory dependencies** are enforced (object can't be created without them)
+- In Spring Boot, if there is only one constructor, `@Autowired` is **optional** — Spring automatically injects
+
+### 23.2 Setter Injection
+
+The dependency is injected through a **setter method**.
+
+```java
+@Service
+public class UserService {
+    
+    private Database database;
+    
+    @Autowired
+    public void setDatabase(Database database) {
+        this.database = database;
+    }
+    
+    public void saveUser(String user) {
+        database.save(user);
+    }
+}
+```
+
+**When to use:**
+- For **optional dependencies**
+- When you need to **change the dependency after object creation**
+
+### 23.3 Field Injection
+
+The dependency is injected directly into the **field** using `@Autowired`.
+
+```java
+@Service
+public class UserService {
+    
+    @Autowired
+    private Database database;  // Field injection
+    
+    public void saveUser(String user) {
+        database.save(user);
+    }
+}
+```
+
+**Drawbacks:**
+- Cannot use `final` keyword (no immutability)
+- Harder to test (can't pass dependencies via constructor)
+- Hidden dependencies — not visible in the constructor signature
+- Generally **not recommended** for production code
+
+### Comparison
+
+| Injection Type | Immutability | Testability | Recommended? |
+|---|---|---|---|
+| Constructor | ✅ Yes (final) | ✅ Excellent | ✅ Yes |
+| Setter | ❌ No | ✅ Good | For optional deps |
+| Field | ❌ No | ⚠️ Harder | ❌ Not recommended |
+
+---
+
+## 24. Bean Scope — Singleton vs Prototype
+
+**Bean Scope** defines how many instances of a bean Spring creates and how long they live.
+
+### 24.1 Singleton (Default)
+
+> Spring creates **only one instance** of the bean and **reuses it everywhere** it is needed.
+
+```java
+@Component
+// @Scope("singleton") ← default, no need to write
+public class MySQLDatabase implements Database {
+    // Spring creates ONE instance and shares it
+}
+```
+
+**Behavior:**
+- One instance per Spring ApplicationContext
+- Every time you `@Autowire` this bean anywhere, you get **the same object**
+- Memory efficient — only one object exists
+
+**Example:**
+```
+@Autowired Database db1  → points to the same object instance
+@Autowired Database db2  → points to the same object instance
+db1 == db2  → TRUE (same object)
+```
+
+### 24.2 Prototype
+
+> Spring creates a **new instance every time** the bean is requested.
+
+```java
+@Component
+@Scope("prototype")
+public class SomeService {
+    // A NEW instance is created every time this bean is requested
+}
+```
+
+**Behavior:**
+- A new object is created each time `@Autowired` is resolved or `getBean()` is called
+- Different places get different instances
+
+**Example:**
+```
+@Autowired SomeService s1  → new instance (object #1)
+@Autowired SomeService s2  → new instance (object #2)
+s1 == s2  → FALSE (different objects)
+```
+
+### When to Use Which Scope?
+
+| Scope | Use Case |
+|---|---|
+| **Singleton** (default) | Stateless services, repositories, controllers — most Spring beans |
+| **Prototype** | When you need a fresh, independent object for each use (stateful beans) |
+
+> **For most Spring Boot applications**, **Singleton** scope is appropriate because services, repositories, and controllers are **stateless** (they don't store user-specific data in their fields).
+
+### How to Verify Scope in Code
+
+```java
+@Component
+@Scope("prototype")  // Change to "singleton" and compare
+public class TestBean {
+    // nothing
+}
+
+// In run method:
+TestBean t1 = context.getBean(TestBean.class);
+TestBean t2 = context.getBean(TestBean.class);
+System.out.println(t1 == t2);
+// Singleton → true
+// Prototype → false
+```
+
+---
+
+## 25. application.properties Configuration
+
+The `application.properties` file (located at `src/main/resources/application.properties`) is the **central configuration file** for a Spring Boot application.
+
+### Common Configurations
+
+```properties
+# Application name
+spring.application.name=my-spring-app
+
+# Server port (default is 8080)
+server.port=8081
+
+# Context path (API prefix)
+server.servlet.context-path=/api
+
+# Database configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/mydb
+spring.datasource.username=root
+spring.datasource.password=password
+
+# JPA / Hibernate
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+# Logging level
+logging.level.org.springframework=INFO
+logging.level.com.example=DEBUG
+```
+
+### Key Points
+
+- You can also use `application.yml` (YAML format) instead of `.properties` — both work
+- `application.properties` is the Spring Boot standard; this series uses `.properties`
+- The **default port** is `8080` — you can change it with `server.port`
+- Static resources (HTML, CSS, images) go in `src/main/resources/static/`
+- Templates (like Thymeleaf) go in `src/main/resources/templates/` — but in modern REST APIs, templates are rarely used
+
+---
+
+## Quick Reference: Key Annotations
+
+| Annotation | Purpose |
+|---|---|
+| `@SpringBootApplication` | Main annotation: enables auto-configuration + component scanning |
+| `@Component` | Marks a class as a Spring-managed bean |
+| `@Service` | Marks a service layer class as a bean |
+| `@Repository` | Marks a data access layer class as a bean |
+| `@Controller` | Marks an MVC controller |
+| `@RestController` | Marks a REST API controller (`@Controller` + `@ResponseBody`) |
+| `@Autowired` | Injects a Spring bean automatically |
+| `@Primary` | Marks a bean as the default when multiple beans of same type exist |
+| `@Qualifier("name")` | Specifies exactly which bean to inject by name |
+| `@Scope("prototype")` | Changes bean scope from singleton to prototype |
+| `@Bean` | Declares a method in a `@Configuration` class as a bean factory |
+| `@Configuration` | Marks a class as a source of bean definitions |
+| `@GetMapping("/path")` | Maps HTTP GET requests to a handler method |
+
+---
+
+## Key Concepts Summary
+
+| Concept | One-Line Explanation |
+|---|---|
+| **Spring** | A framework that makes Java backend development simpler and cleaner |
+| **Spring Boot** | An extension of Spring that makes Spring itself simpler via auto-config |
+| **IoC** | Control of object creation is given to Spring instead of the developer |
+| **DI** | Dependencies are provided to a class from outside (not created inside) |
+| **Bean** | An object whose lifecycle is managed by the Spring IoC container |
+| **Tight Coupling** | Class creates its own dependencies using `new` — hard to change/test |
+| **Loose Coupling** | Class depends on interfaces; implementation injected externally |
+| **Singleton Scope** | One shared instance for the entire application |
+| **Prototype Scope** | New instance created every time the bean is requested |
+| **Component Scanning** | Spring automatically discovers annotated classes and registers them as beans |
+
